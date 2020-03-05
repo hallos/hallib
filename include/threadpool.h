@@ -14,6 +14,9 @@ class thread_pool
 {
 public:
     thread_pool(int nr_threads);
+    ~thread_pool() = default;
+    thread_pool(thread_pool&) = delete;
+    thread_pool& operator=(thread_pool&) = delete;
 
     /*
         add_work
