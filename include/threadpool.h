@@ -9,17 +9,42 @@
 
 namespace hallos
 {
+
 class thread_pool
 {
 public:
-    thread_pool(int nr_threads)
+    thread_pool(int nr_threads);
+    ~thread_pool() = default;
+    thread_pool(thread_pool&) = delete;
+    thread_pool& operator=(thread_pool&) = delete;
+
+    /*
+        add_work
+        Takes a std::function and adds to task queue
+    */
+    template <typename T, typename... ARGS>
+    std::future<T> add_work(std::function<T(ARGS...)> function, ARGS... arguments);
+
+private:
+    class impl;
+    std::unique_ptr<impl> pimpl_;
+};
+
+/*--------------------------------------
+    Thread pool implementation
+---------------------------------------*/
+class thread_pool::impl
+{
+public:
+    impl(int nr_threads)
     {
-        for (int i = 0; i < nr_threads; i++)
+        for (int i = 0; i < nr_threads; ++i)
         {
-            threads_.emplace_back(new std::thread(&thread_pool::run_worker_thread, this));
+            threads_.emplace_back(new std::thread(&impl::run_worker_thread, this));
         }
-    };
-    ~thread_pool()
+    }
+
+    ~impl()
     {
         run_threads_ = false;
         for (const auto& thread : threads_)
@@ -28,8 +53,12 @@ public:
             add_work(func);
             thread->join();
         }
-    };
+    }
 
+    /*
+        add_work
+        Takes a std::function and adds to task queue
+    */
     template <typename T, typename... ARGS>
     std::future<T> add_work(std::function<T(ARGS...)> function, ARGS... arguments)
     {
@@ -71,4 +100,16 @@ private:
         }
     }
 };
+
+thread_pool::thread_pool(int nr_threads)
+{
+    pimpl_ = std::make_unique<impl>(nr_threads);
+}
+
+template <typename T, typename... ARGS>
+std::future<T> thread_pool::add_work(std::function<T(ARGS...)> function, ARGS... arguments)
+{
+    return pimpl_->add_work(function, arguments...);
+}
+
 } //namespace hallos
