@@ -1,58 +1,58 @@
-#include "Server.h"
+#include "tcp_server.h"
 #include <vector>
 #include "TCPStreamSocket.h"
-#include "Logger.h"
+//#include "Logger.h"
 
 
-Server::Server(std::shared_ptr<ITCPServerSocket> serverSocket,
-               std::shared_ptr<ConnectionHandler> connectionHandler,
+tcp_server::tcp_server(std::shared_ptr<ITCPServerSocket> serverSocket,
+               std::shared_ptr<connection_handler> connectionHandler,
                int numThreads) :
                     run_(false),
                     serverSocket_(serverSocket),
-                    connectionHandler_(connectionHandler)
+                    connection_handler_(connectionHandler)
 {
     threadPool_ = std::make_shared<hallos::thread_pool>(numThreads);
 }
 
-Server::~Server()
+tcp_server::~tcp_server()
 {
     run_ = false;
     serverThread_->join();
 }
 
-bool Server::startServer()
+bool tcp_server::startServer()
 {
     if (!run_)
     {
         std::lock_guard<std::mutex> lock(runMutex_);
         run_ = true;
-        serverThread_ = std::make_unique<std::thread>(&Server::runServer, this);
+        serverThread_ = std::make_unique<std::thread>(&tcp_server::runServer, this);
         return true;
     }
     else
     {
-        Logger::log("Server::startServer(): Server is already running.");
+//        Logger::log("tcp_server::startServer(): tcp_server is already running.");
         return false;
     }
 }
 
-void Server::stopServer()
+void tcp_server::stopServer()
 {
     runMutex_.lock();
     run_ = false;
     runMutex_.unlock();
 }
 
-bool Server::isRunning()
+bool tcp_server::isRunning()
 {
     return run_;
 }
 
-void Server::runServer(){
+void tcp_server::runServer(){
     try
     {
 
-        std::function<void(std::shared_ptr<ITCPStreamSocket>)> handler = [connHandler = connectionHandler_](std::shared_ptr<ITCPStreamSocket> clientSocket)
+        std::function<void(std::shared_ptr<ITCPStreamSocket>)> handler = [connHandler = connection_handler_](std::shared_ptr<ITCPStreamSocket> clientSocket)
         {
             connHandler->onAccept(clientSocket);
         };
@@ -69,8 +69,8 @@ void Server::runServer(){
     }
     catch (TCPSocketException& e)
     {
-        Logger::log("Server::runServer(): Socket failed: " + e.what());
-        Logger::log("Server::runServer(): Shutting down server");
+//        Logger::log("tcp_server::runServer(): Socket failed: " + e.what());
+//        Logger::log("tcp_server::runServer(): Shutting down server");
         stopServer();
         return;
     }

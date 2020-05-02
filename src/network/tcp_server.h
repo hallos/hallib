@@ -10,21 +10,21 @@
 #include "threadpool.h"
 
 
-class ConnectionHandler
+class connection_handler
 {
 public:
-    ConnectionHandler() {};
-    virtual ~ConnectionHandler() {};
+    connection_handler() {};
+    virtual ~connection_handler() {};
     virtual void onAccept(std::shared_ptr<ITCPStreamSocket> clientSocket) = 0;
 };
 
-class Server 
+class tcp_server 
 {
 public:
-    Server(std::shared_ptr<ITCPServerSocket> serverSocket,
-           std::shared_ptr<ConnectionHandler> connectionHandler,
+    tcp_server(std::shared_ptr<ITCPServerSocket> serverSocket,
+           std::shared_ptr<connection_handler> connection_handler,
            int numThreads);
-    ~Server();
+    ~tcp_server();
 
     bool isRunning();
     bool startServer();
@@ -35,7 +35,7 @@ private:
     std::unique_ptr<std::thread> serverThread_;
     std::shared_ptr<hallos::thread_pool> threadPool_;
     std::shared_ptr<ITCPServerSocket> serverSocket_;
-    std::shared_ptr<ConnectionHandler> connectionHandler_;
+    std::shared_ptr<connection_handler> connection_handler_;
 
     void runServer();
 };

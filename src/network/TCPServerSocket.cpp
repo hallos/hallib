@@ -12,7 +12,7 @@ typedef int socklen_t;
 #include <unistd.h> //close
 #endif
 
-#include "Logger.h"
+//#include "Logger.h"
 
 /**
  * Constructor
@@ -34,7 +34,7 @@ TCPServerSocket::TCPServerSocket(int port)
     socket_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (socket_ == INVALID_SOCKET)
     {
-        Logger::log("TCPServerSocket: Could not create socket.");
+//        Logger::log("TCPServerSocket: Could not create socket.");
         throw TCPSocketException("Could not create socket.");
     } 
 
@@ -48,14 +48,14 @@ TCPServerSocket::TCPServerSocket(int port)
 
     if (bind(socket_, reinterpret_cast<sockaddr*>(&sockAdr), sizeof(sockAdr)) != 0)
     {
-        Logger::log("TCPServerSocket: Couldn't bind socket. Error code: " + std::to_string(errno));
+//        Logger::log("TCPServerSocket: Couldn't bind socket. Error code: " + std::to_string(errno));
         closeSocket();
         throw TCPSocketException("Could not bind socket.");
     }
 
     if (listen(socket_, SOMAXCONN)!=0)
     {
-        Logger::log("TCPServerSocket: Couldn't set socket in listening mode. Error code: " + std::to_string(errno));
+//        Logger::log("TCPServerSocket: Couldn't set socket in listening mode. Error code: " + std::to_string(errno));
         closeSocket();
         throw TCPSocketException("Could not set socket in listening mode.");
     }   
