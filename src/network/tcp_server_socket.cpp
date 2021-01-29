@@ -1,4 +1,4 @@
-#include "TCPServerSocket.h"
+#include "tcp_server_socket.h"
 
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
@@ -17,25 +17,25 @@ typedef int socklen_t;
 /**
  * Constructor
  */ 
-TCPServerSocket::TCPServerSocket(int port)
+tcp_server_socket::tcp_server_socket(int port)
 {
 #if WIN32
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(2,0), &wsaData) != 0)
     {
-        throw TCPSocketException("Failed to startup winsock.");
+        throw tcp_socket_exception("Failed to startup winsock.");
     }
     if (!(LOBYTE(wsaData.wVersion) >= 2))
     {
-        throw TCPSocketException("Too old winsock version.");
+        throw tcp_socket_exception("Too old winsock version.");
     }
 #endif //WIN32
 
     socket_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (socket_ == INVALID_SOCKET)
     {
-//        Logger::log("TCPServerSocket: Could not create socket.");
-        throw TCPSocketException("Could not create socket.");
+//        Logger::log("tcp_server_socket: Could not create socket.");
+        throw tcp_socket_exception("Could not create socket.");
     } 
 
     linger so_linger = {1, 0};
@@ -48,23 +48,23 @@ TCPServerSocket::TCPServerSocket(int port)
 
     if (bind(socket_, reinterpret_cast<sockaddr*>(&sockAdr), sizeof(sockAdr)) != 0)
     {
-//        Logger::log("TCPServerSocket: Couldn't bind socket. Error code: " + std::to_string(errno));
+//        Logger::log("tcp_server_socket: Couldn't bind socket. Error code: " + std::to_string(errno));
         closeSocket();
-        throw TCPSocketException("Could not bind socket.");
+        throw tcp_socket_exception("Could not bind socket.");
     }
 
     if (listen(socket_, SOMAXCONN)!=0)
     {
-//        Logger::log("TCPServerSocket: Couldn't set socket in listening mode. Error code: " + std::to_string(errno));
+//        Logger::log("tcp_server_socket: Couldn't set socket in listening mode. Error code: " + std::to_string(errno));
         closeSocket();
-        throw TCPSocketException("Could not set socket in listening mode.");
+        throw tcp_socket_exception("Could not set socket in listening mode.");
     }   
 }
 
 /**
  * Destructor
  */ 
-TCPServerSocket::~TCPServerSocket()
+tcp_server_socket::~tcp_server_socket()
 {
     closeSocket();
 }
@@ -72,7 +72,7 @@ TCPServerSocket::~TCPServerSocket()
 /**
  * 
  */
-std::unique_ptr<ITCPStreamSocket> TCPServerSocket::acceptConnection()
+std::unique_ptr<Itcp_stream_socket> tcp_server_socket::acceptConnection()
 {
     sockaddr_in clientSockAdr;
     socklen_t clientSockSize = sizeof(clientSockAdr);
@@ -88,24 +88,24 @@ std::unique_ptr<ITCPStreamSocket> TCPServerSocket::acceptConnection()
     int retVal = select(1,&fdRead,NULL,NULL,&timeOutTime);
     if (retVal <= 0)
     {
-        return std::unique_ptr<TCPStreamSocket>();
+        return std::unique_ptr<tcp_stream_socket>();
     }
 
     if (!FD_ISSET(socket_,&fdRead))
     {
-        return std::unique_ptr<TCPStreamSocket>();
+        return std::unique_ptr<tcp_stream_socket>();
     }*/
 
     Socket clientSocket = accept(socket_, reinterpret_cast<sockaddr*>(&clientSockAdr),&clientSockSize);
     if (clientSocket == INVALID_SOCKET)
     {
-        return std::unique_ptr<TCPStreamSocket>();
+        return std::unique_ptr<tcp_stream_socket>();
     }
 
-    return std::make_unique<TCPStreamSocket>(clientSocket);    
+    return std::make_unique<tcp_stream_socket>(clientSocket);    
 } 
 
-void TCPServerSocket::closeSocket()
+void tcp_server_socket::closeSocket()
 {
     if (socket_ != INVALID_SOCKET)
     {

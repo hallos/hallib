@@ -9,20 +9,20 @@
 
 typedef int Socket;
 
-class ITCPStreamSocket
+class Itcp_stream_socket
 {
 public:
-    virtual ~ITCPStreamSocket() {};
+    virtual ~Itcp_stream_socket() {};
 
     virtual std::string receiveData() = 0;
     virtual bool sendData(const std::string& buffer) = 0; 
 };
 
-class TCPStreamSocket : public ITCPStreamSocket
+class tcp_stream_socket : public Itcp_stream_socket
 {
 public:
-    TCPStreamSocket(Socket socket);
-    virtual ~TCPStreamSocket();
+    tcp_stream_socket(Socket socket);
+    virtual ~tcp_stream_socket();
 
     std::string receiveData();
     bool sendData(const std::string& buffer);

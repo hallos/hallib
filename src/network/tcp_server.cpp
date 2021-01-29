@@ -1,10 +1,10 @@
 #include "tcp_server.h"
 #include <vector>
-#include "TCPStreamSocket.h"
+#include "tcp_stream_socket.h"
 //#include "Logger.h"
 
 
-tcp_server::tcp_server(std::shared_ptr<ITCPServerSocket> serverSocket,
+tcp_server::tcp_server(std::shared_ptr<Itcp_server_socket> serverSocket,
                std::shared_ptr<connection_handler> connectionHandler,
                int numThreads) :
                     run_(false),
@@ -52,7 +52,7 @@ void tcp_server::runServer(){
     try
     {
 
-        std::function<void(std::shared_ptr<ITCPStreamSocket>)> handler = [connHandler = connection_handler_](std::shared_ptr<ITCPStreamSocket> clientSocket)
+        std::function<void(std::shared_ptr<Itcp_stream_socket>)> handler = [connHandler = connection_handler_](std::shared_ptr<Itcp_stream_socket> clientSocket)
         {
             connHandler->onAccept(clientSocket);
         };
@@ -62,12 +62,12 @@ void tcp_server::runServer(){
             auto clientSocket = serverSocket_->acceptConnection();
             if (clientSocket)
             {    
-                std::shared_ptr<ITCPStreamSocket> sharedSocket = std::move(clientSocket);
+                std::shared_ptr<Itcp_stream_socket> sharedSocket = std::move(clientSocket);
                 threadPool_->add_work(handler, sharedSocket);
             }          
         }
     }
-    catch (TCPSocketException& e)
+    catch (tcp_socket_exception& e)
     {
 //        Logger::log("tcp_server::runServer(): Socket failed: " + e.what());
 //        Logger::log("tcp_server::runServer(): Shutting down server");
