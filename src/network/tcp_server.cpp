@@ -1,7 +1,6 @@
 #include "tcp_server.h"
 #include <vector>
 #include "tcp_stream_socket.h"
-//#include "Logger.h"
 
 namespace hallos
 {
@@ -33,7 +32,6 @@ bool tcp_server::startServer()
     }
     else
     {
-//        Logger::log("tcp_server::startServer(): tcp_server is already running.");
         return false;
     }
 }
@@ -71,8 +69,6 @@ void tcp_server::runServer(){
     }
     catch (tcp_socket_exception& e)
     {
-//        Logger::log("tcp_server::runServer(): Socket failed: " + e.what());
-//        Logger::log("tcp_server::runServer(): Shutting down server");
         stopServer();
         return;
     }

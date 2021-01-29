@@ -12,8 +12,6 @@ typedef int socklen_t;
 #include <unistd.h> //close
 #endif
 
-//#include "Logger.h"
-
 namespace hallos
 {
 
@@ -37,7 +35,6 @@ tcp_server_socket::tcp_server_socket(int port)
     socket_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (socket_ == INVALID_SOCKET)
     {
-//        Logger::log("tcp_server_socket: Could not create socket.");
         throw tcp_socket_exception("Could not create socket.");
     } 
 
@@ -51,14 +48,12 @@ tcp_server_socket::tcp_server_socket(int port)
 
     if (bind(socket_, reinterpret_cast<sockaddr*>(&sockAdr), sizeof(sockAdr)) != 0)
     {
-//        Logger::log("tcp_server_socket: Couldn't bind socket. Error code: " + std::to_string(errno));
         closeSocket();
         throw tcp_socket_exception("Could not bind socket.");
     }
 
     if (listen(socket_, SOMAXCONN)!=0)
     {
-//        Logger::log("tcp_server_socket: Couldn't set socket in listening mode. Error code: " + std::to_string(errno));
         closeSocket();
         throw tcp_socket_exception("Could not set socket in listening mode.");
     }   
