@@ -1,5 +1,5 @@
 
-include_directories(../)
+#include_directories(../)
 add_library(hallos_server STATIC
     tcp_server.cpp
     TCPServerSocket.cpp
