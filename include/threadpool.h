@@ -1,3 +1,6 @@
+#ifndef HALLOS_THREADPOOL_H_
+#define HALLOS_THREADPOOL_H_
+
 #include <vector>
 #include <memory>
 #include <thread>
@@ -101,15 +104,17 @@ private:
     }
 };
 
-thread_pool::thread_pool(int nr_threads)
+inline thread_pool::thread_pool(int nr_threads)
 {
     pimpl_ = std::make_unique<impl>(nr_threads);
 }
 
 template <typename T, typename... ARGS>
-std::future<T> thread_pool::add_work(std::function<T(ARGS...)> function, ARGS... arguments)
+inline std::future<T> thread_pool::add_work(std::function<T(ARGS...)> function, ARGS... arguments)
 {
     return pimpl_->add_work(function, arguments...);
 }
 
 } //namespace hallos
+
+#endif
