@@ -9,6 +9,8 @@
 #include "tcp_server_socket.h"
 #include "threadpool.h"
 
+namespace hallos
+{
 
 class connection_handler
 {
@@ -39,5 +41,7 @@ private:
 
     void runServer();
 };
+
+} //namespace hallos
 
 #endif

@@ -3,6 +3,8 @@
 #include "tcp_stream_socket.h"
 //#include "Logger.h"
 
+namespace hallos
+{
 
 tcp_server::tcp_server(std::shared_ptr<Itcp_server_socket> serverSocket,
                std::shared_ptr<connection_handler> connectionHandler,
@@ -75,3 +77,5 @@ void tcp_server::runServer(){
         return;
     }
 }
+
+} //namespace hallos

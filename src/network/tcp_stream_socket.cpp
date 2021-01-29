@@ -13,7 +13,8 @@
 
 #define MAX_SEGMENT_SIZE 2000
 
-
+namespace hallos
+{
 
 /**
  * Constructor
@@ -62,3 +63,5 @@ bool tcp_stream_socket::sendData(const std::string& buffer)
     }
     return true;
 }
+
+} //namespace hallos

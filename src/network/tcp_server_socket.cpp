@@ -14,6 +14,9 @@ typedef int socklen_t;
 
 //#include "Logger.h"
 
+namespace hallos
+{
+
 /**
  * Constructor
  */ 
@@ -117,3 +120,5 @@ void tcp_server_socket::closeSocket()
 #endif
     }
 }
+
+} //namespace hallos

@@ -9,6 +9,9 @@
 
 typedef int Socket;
 
+namespace hallos
+{
+
 class Itcp_stream_socket
 {
 public:
@@ -29,5 +32,7 @@ public:
 private:
     Socket socket_;
 };
+
+} //namespace hallos
 
 #endif

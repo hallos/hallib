@@ -11,6 +11,9 @@
 
 typedef int Socket;
 
+namespace hallos
+{
+
 class tcp_socket_exception : public std::exception
 {
 public:
@@ -42,5 +45,7 @@ private:
 
     void closeSocket();
 };
+
+} //namespace hallos
 
 #endif 
