@@ -72,7 +72,7 @@ public:
                         };
         {
             std::lock_guard<std::mutex> lock(queue_mutex_);
-            work_queue_.emplace(work);
+            work_queue_.emplace(work, 0);
         }
 
         work_available_.notify_one();
@@ -80,9 +80,21 @@ public:
     }
 
 private:
+    class task_t
+    {
+    public:
+        task_t(std::function<void()> function, int priority) : priority(priority), function(function) {};
+        int priority;
+        std::function<void()> function;
+        bool operator<(const task_t& t) const
+        {
+            return this->priority < t.priority;
+        }
+    };
+
     bool run_threads_ = true;
     std::vector<std::unique_ptr<std::thread>> threads_;
-    std::queue<std::function<void()>> work_queue_;
+    std::priority_queue<task_t> work_queue_;
     std::mutex queue_mutex_;
     std::condition_variable work_available_;
 
@@ -95,11 +107,11 @@ private:
             {
                 work_available_.wait(lock);
             }
-            auto function = work_queue_.front();
+            auto task = work_queue_.top();
             work_queue_.pop();
             lock.unlock();
 
-            function();
+            task.function();
         }
     }
 };
