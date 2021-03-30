@@ -23,10 +23,10 @@ public:
 
     /*
         add_work
-        Takes a std::function and adds to task queue
+        Takes a std::function and adds it to the task queue with given priority
     */
     template <typename T, typename... ARGS>
-    std::future<T> add_work(std::function<T(ARGS...)> function, ARGS... arguments);
+    std::future<T> add_work(int priority, std::function<T(ARGS...)> function, ARGS... arguments);
 
 private:
     class impl;
@@ -53,17 +53,17 @@ public:
         for (const auto& thread : threads_)
         {
             std::function<int()> func = [](){ return 6; };
-            add_work(func);
+            add_work(0, func);
             thread->join();
         }
     }
 
     /*
         add_work
-        Takes a std::function and adds to task queue
+        Takes a std::function and its priority and adds to task queue
     */
     template <typename T, typename... ARGS>
-    std::future<T> add_work(std::function<T(ARGS...)> function, ARGS... arguments)
+    std::future<T> add_work(int priority, std::function<T(ARGS...)> function, ARGS... arguments)
     {
         auto task_ptr = std::make_shared<std::packaged_task<T(ARGS...)>>(function);
         auto work = [task_ptr, arguments...]()
@@ -72,7 +72,7 @@ public:
                         };
         {
             std::lock_guard<std::mutex> lock(queue_mutex_);
-            work_queue_.emplace(work, 0);
+            work_queue_.emplace(work, priority);
         }
 
         work_available_.notify_one();
@@ -122,9 +122,9 @@ inline thread_pool::thread_pool(int nr_threads)
 }
 
 template <typename T, typename... ARGS>
-inline std::future<T> thread_pool::add_work(std::function<T(ARGS...)> function, ARGS... arguments)
+inline std::future<T> thread_pool::add_work(int priority, std::function<T(ARGS...)> function, ARGS... arguments)
 {
-    return pimpl_->add_work(function, arguments...);
+    return pimpl_->add_work(priority, function, arguments...);
 }
 
 } //namespace hallos
