@@ -63,7 +63,7 @@ void tcp_server::runServer(){
             if (clientSocket)
             {    
                 std::shared_ptr<Itcp_stream_socket> sharedSocket = std::move(clientSocket);
-                threadPool_->add_work(handler, sharedSocket);
+                threadPool_->add_work(0, handler, sharedSocket);
             }          
         }
     }
