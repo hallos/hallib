@@ -80,6 +80,9 @@ public:
     }
 
 private:
+    /**
+     * Internal class task_t to represent a queued task
+     */
     class task_t
     {
     public:
