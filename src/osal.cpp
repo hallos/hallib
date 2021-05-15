@@ -94,7 +94,7 @@ int socket_receive(int socket, char* buffer, int buffer_size)
     return recv(socket, buffer, buffer_size, 0);  
 }
 
-int socket_send(int socket, char* buffer, int buffer_size)
+int socket_send(int socket, const char* buffer, int buffer_size)
 {
     return send(socket, buffer, buffer_size, 0);
 }
