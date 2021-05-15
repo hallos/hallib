@@ -89,6 +89,16 @@ int socket_accept(int socket)
     return client_socket;
 }
 
+int socket_receive(int socket, char* buffer, int buffer_size)
+{
+    return recv(socket, buffer, buffer_size, 0);  
+}
+
+int socket_send(int socket, char* buffer, int buffer_size)
+{
+    return send(socket, buffer, buffer_size, 0);
+}
+
 int socket_set_so_linger(int socket, int arg1, int arg2)
 {
     linger so_linger = {arg1, arg2};

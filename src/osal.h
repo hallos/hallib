@@ -22,6 +22,10 @@ void socket_close(int socket);
 
 int socket_accept(int socket);
 
+int socket_receive(int socket, char* buffer, int buffer_size);
+
+int socket_send(int socket, const char* buffer, int buffer_size);
+
 int socket_set_so_linger(int socket, int arg1, int arg2);
 
 }; // namespace os

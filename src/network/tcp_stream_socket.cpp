@@ -1,15 +1,6 @@
 #include "tcp_stream_socket.h"
 
-#ifdef WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <winsock2.h>
-#include <stdio.h>
-#else
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <unistd.h> //close
-#endif
+#include "osal.h"
 
 #define MAX_SEGMENT_SIZE 2000
 
@@ -28,12 +19,7 @@ tcp_stream_socket::~tcp_stream_socket()
 {
     if (socket_ != INVALID_SOCKET)
     {
-#if WIN32
-        closesocket(socket_);
-        WSACleanup();
-#else
-        close(socket_);
-#endif
+        os::socket_close(socket_);
     }
 }
 
@@ -43,7 +29,7 @@ tcp_stream_socket::~tcp_stream_socket()
 std::string tcp_stream_socket::receiveData()
 {
     char recBuffer[MAX_SEGMENT_SIZE];
-    int numBytes = recv(socket_, recBuffer, sizeof(recBuffer), 0);
+    int numBytes = os::socket_receive(socket_, recBuffer, sizeof(recBuffer));
     if (numBytes == -1 || numBytes == 0)
     {
         return std::string();
@@ -56,7 +42,7 @@ std::string tcp_stream_socket::receiveData()
  */ 
 bool tcp_stream_socket::sendData(const std::string& buffer)
 {
-    if (send(socket_, buffer.data(), buffer.size(), 0) == -1)
+    if (os::socket_send(socket_, buffer.data(), buffer.size()) == -1)
     {   
         //TODO: Log error
         return false;
