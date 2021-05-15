@@ -1,5 +1,5 @@
 
-#include_directories(../)
+include_directories(../)
 add_library(hallos_network STATIC
     tcp_server.cpp
     tcp_server_socket.cpp
@@ -8,4 +8,5 @@ add_library(hallos_network STATIC
 
 target_link_libraries(hallos_network
     pthread
+    hallos_osal
 )
