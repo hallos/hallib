@@ -42,8 +42,6 @@ public:
 private:
     int port_;
     Socket socket_;
-
-    void closeSocket();
 };
 
 } //namespace hallos
